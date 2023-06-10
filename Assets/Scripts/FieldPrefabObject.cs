@@ -18,6 +18,18 @@ public class FieldPrefabObject
     }
 
     public bool isChangeAble = true;
+
+    public void ChangeToGreen()
+    {
+        _instance.GetComponent<Image>().color = Color.green;
+    }
+
+    public void ChangeToRed()
+    {
+        _instance.GetComponent<Image>().color = Color.red;
+    }
+
+
     public bool TryGetTextByName(string name, out TextMeshProUGUI text)
     {
         text= null;
@@ -48,10 +60,12 @@ public class FieldPrefabObject
         _instance.GetComponent<Image>().color = new Color(1f, 1f, 1f);
     }
 
+    public int Number;
     public void SetNumber(int number)
     {
         if (TryGetTextByName("Value", out TextMeshProUGUI text))
         {
+            Number=number;
             text.text=number.ToString();
             for (int i = 0; i < 10; i++)
             {

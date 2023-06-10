@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEditor.SearchService;
+using UnityEngine.SceneManagement;
 
 public class Game : MonoBehaviour
 {
@@ -30,16 +32,46 @@ public class Game : MonoBehaviour
 
     }
 
-    private SudokuObject _currentSudokuObject;
+    public void ClickOn_Solve()
+    {
+        for (int row=0; row<9; row++)
+        {
+            for(int column=0; column<9; column++)
+            {
+                FieldPrefabObject fieldObject = _fieldPrefabObjectDic[new Tuple<int, int>(row, column)];
+                if (fieldObject.isChangeAble)
+                {
+                    if (_finalObject.Values[row,column]==fieldObject.Number)
+                    {
+                        fieldObject.ChangeToGreen();
+                    }
+                    else
+                    {
+                        fieldObject.ChangeToRed();
+                    }
+                }
+            }
+        }
+    }
+
+    public void ClickOn_BackButton()
+    {
+        SceneManager.LoadScene(0);
+    }
+
+    private SudokuObject _gameObject;
+    private SudokuObject _finalObject;
 
     private void CreateSudokuobject()
     {
-        _currentSudokuObject = SudokuGenerator.CreateSudokuObject();
+        SudokuGenerator.CreateSudokuObject(out SudokuObject finalObject, out SudokuObject gameObject);
+        _finalObject = finalObject;
+        _gameObject = gameObject;
         for (int i = 0; i<9; i++)
         {
             for (int k = 0; k < 9; k++)
             {
-                var currentValue = _currentSudokuObject.Values[i, k];
+                var currentValue = _gameObject.Values[i, k];
                 if (currentValue!=0)
                 {
                     FieldPrefabObject fieldObject = _fieldPrefabObjectDic[new Tuple<int, int>(i, k)];
@@ -109,13 +141,9 @@ public class Game : MonoBehaviour
             }
             else
             {
-                int currentNumber = controlPrefabObject.Number;
-                int row = _currentHoveredFieldPrefab.Row;
-                int column = _currentHoveredFieldPrefab.Column;
-                if (_currentSudokuObject.IsPossibleNumberInPosition(currentNumber, row, column))
-                {
-                    _currentHoveredFieldPrefab.SetNumber(controlPrefabObject.Number);
-                }
+                _currentHoveredFieldPrefab.SetNumber(controlPrefabObject.Number);
+
+                
             }
             
         }
